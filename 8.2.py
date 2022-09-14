@@ -12,6 +12,9 @@ def lentokenttienlkm(maakoodi):
         medium = 0
         large = 0
         heliport = 0
+        closed = 0
+        seabase = 0
+        balloonport = 0
         for i in tulos:
             for tyyppi in i:
                 if tyyppi == "small_airport":
@@ -22,13 +25,22 @@ def lentokenttienlkm(maakoodi):
                     large += 1
                 elif tyyppi == "heliport":
                     heliport += 1
+                elif tyyppi == "closed":
+                    closed += 1
+                elif tyyppi == "seabase":
+                    seabase += 1
+                elif tyyppi == "balloonport":
+                    balloonport += 1
                 else:
                     continue
 
         print(f'''Pieniä lentokenttiä: {small}\n
         Keskikokoisia lentokenttiä: {medium}\n
         Isoja lentokenttiä: {large}\n
-        Heliportteja: {heliport}''')
+        Heliportteja: {heliport}
+        Suljettuja: {closed}
+        Seabaseja: {seabase}
+        Balloonportteja: {balloonport}''')
 
 yhteys = mysql.connector.connect(
     host='localhost',
@@ -39,26 +51,31 @@ yhteys = mysql.connector.connect(
     autocommit=True
 )
 
-koodi = input('Anna maakoodi: ')
-lentokenttienlkm(koodi.upper())
+#koodi = input('Anna maakoodi: ')
+#lentokenttienlkm(koodi.upper())
 
 # Vaihtoehtoinen, jälleen elegantimpi tapa:
 
-def lentokenttienlkm2(maakoodi):
-    sql = f'''select type, count(*)
-    from airport
-    where iso_country = "{maakoodi}"
-    group by airport.type;'''
+def tyypit():
+    sql = f'''select distinct type
+    from airport'''
     kursori = yhteys.cursor()
     kursori.execute(sql)
     tulos = kursori.fetchall()
-    if kursori.rowcount > 0:
-        print(f'''Maassa on lentokentätyyppejä:
-        Suljettuja: {tulos[0][1]}
-        Heliportteja: {tulos[1][1]}
-        Suuria lentokenttiä: {tulos[2][1]}
-        Keskikokoisia lentokenttiä: {tulos[3][1]}
-        Pieniä lentokenttiä: {tulos[4][1]}.''')
+    return tulos
+
+def lentokenttienlkm2(maakoodi, tyyppi):
+    sql = f'''select count(*)
+    from airport
+    where iso_country = "{maakoodi}"
+    and type = "{tyyppi}";'''
+    kursori = yhteys.cursor()
+    kursori.execute(sql)
+    tulos2 = kursori.fetchone()
+    return tulos2
 
 koodi2 = input('Anna maakoodi: ')
-lentokenttienlkm2(koodi2.upper())
+
+
+for tyyppi in tyypit():
+    print(lentokenttienlkm2(koodi2, tyyppi[0])[0], tyyppi[0])
