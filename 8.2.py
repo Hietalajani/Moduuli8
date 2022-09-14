@@ -76,6 +76,6 @@ def lentokenttienlkm2(maakoodi, tyyppi):
 
 koodi2 = input('Anna maakoodi: ')
 
-
+print('Lentokenttätyyppejä maassa: ')
 for tyyppi in tyypit():
     print(lentokenttienlkm2(koodi2, tyyppi[0])[0], tyyppi[0])
