@@ -51,8 +51,8 @@ yhteys = mysql.connector.connect(
     autocommit=True
 )
 
-#koodi = input('Anna maakoodi: ')
-#lentokenttienlkm(koodi.upper())
+koodi = input('Anna maakoodi: ')
+lentokenttienlkm(koodi.upper())
 
 # Vaihtoehtoinen, jälleen elegantimpi tapa:
 
